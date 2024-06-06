@@ -31,7 +31,7 @@ class SOULSLIKE_PROTO_API ASLPlayer : public ASLCharacterBase, public IAbilityCo
 	UCameraComponent* FollowCamera;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component|Input", meta = (AllowPrivateAccess = "true"))
-	USLInputComponent* PlayerInputComponent;
+	USLInputComponent* ExtInputComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component|Combat", meta = (AllowPrivateAccess = "true"))
 	USLCombatComponent* CombatComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component|Stat", meta = (AllowPrivateAccess = "true"))
@@ -58,5 +58,6 @@ public:
 	virtual void OnAbilityTrigger(FGameplayTag TriggerTag) override;
 
 	/* ICombatInterface */
+	virtual bool HasActiveCombatAbility() override;
 	virtual void Death() override;
 };

@@ -21,7 +21,7 @@ ASLPlayer::ASLPlayer()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-	PlayerInputComponent = CreateDefaultSubobject<USLInputComponent>(TEXT("InputComponent"));
+	ExtInputComponent = CreateDefaultSubobject<USLInputComponent>(TEXT("InputComponent"));
 	CombatComponent = CreateDefaultSubobject<USLCombatComponent>(TEXT("CombatComponent"));
 	StatComponent = CreateDefaultSubobject<USLStatComponent>(TEXT("StatComponent"));
 }
@@ -30,9 +30,9 @@ void ASLPlayer::SetupPlayerInputComponent(UInputComponent* InPlayerInputComponen
 {
 	Super::SetupPlayerInputComponent(InPlayerInputComponent);
 
-	if (PlayerInputComponent != nullptr)
+	if (ExtInputComponent != nullptr)
 	{
-		PlayerInputComponent->SetupInputComponent(InPlayerInputComponent);
+		ExtInputComponent->SetupInputComponent(InPlayerInputComponent);
 	}
 }
 
@@ -67,6 +67,16 @@ void ASLPlayer::OnAbilityTrigger(FGameplayTag TriggerTag)
 	{
 		CombatComponent->OnActivateAbility(TriggerTag);
 	}
+}
+
+bool ASLPlayer::HasActiveCombatAbility()
+{
+	if (CombatComponent != nullptr)
+	{
+		return CombatComponent->HasActiveAbility();
+	}
+
+	return false;
 }
 
 void ASLPlayer::Death()

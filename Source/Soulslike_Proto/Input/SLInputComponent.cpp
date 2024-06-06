@@ -7,6 +7,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Ability/AbilityControlInterface.h"
+#include "Character/CombatInterface.h"
 
 // Sets default values for this component's properties
 USLInputComponent::USLInputComponent()
@@ -54,6 +55,14 @@ void USLInputComponent::SetupInputComponent(UInputComponent* PlayerInputComponen
 
 void USLInputComponent::StartJump()
 {
+	if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetPawn()))
+	{
+		if (CombatInterface->HasActiveCombatAbility())
+		{
+			return;
+		}
+	}
+
 	if (ACharacter* OwningCharacter = Cast<ACharacter>(GetPawn()))
 	{
 		OwningCharacter->Jump();

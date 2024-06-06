@@ -37,6 +37,15 @@ public:
 	void RegisterAbility();
 	void UnRegisterAbility();
 
+	void RegisterBlockTag(FGameplayTag InBlockTag);
+	void RegisterBlockTags(TSet<FGameplayTag>& InBlockTags);
+	void UnRegisterBlockTag(FGameplayTag InBlockTag);
+	void UnRegisterBlockTags(TSet<FGameplayTag>& InBlockTags);
+	bool HasBlockTag(FGameplayTag InBlockTag);
+	bool HasBlockTags(TSet<FGameplayTag>& InBlockTags);
+
+	bool HasActiveAbility() const { return bHasActiveAbility; }
+
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
 	TArray<FAbilityInfo> CombatAbilities;
@@ -44,9 +53,13 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
 	TMap<FGameplayTag, USLCombatAbility*> GrantedAbilities;
 
+	//해당 태그를 가지고 있는 스킬은 활성화될 수 없습니다.
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
+	TSet<FGameplayTag> GrantedBlockTags;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
 	USLCombatAbility* ActivatedAbility;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
-	uint8 bHasActiveAbility;
+	uint8 bHasActiveAbility : 1;
 };

@@ -4,7 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "GameplayTagContainer.h"
 #include "SLCombatAbility.generated.h"
+
+class USLCombatComponent;
 
 DECLARE_DYNAMIC_DELEGATE(FOnEndAbilitySignature);
 
@@ -20,6 +23,8 @@ public:
 	APawn* GetOwningPawn() const;
 	USkeletalMeshComponent* GetAvatarMeshComponent() const;
 	UAnimInstance* GetAvatarAnimInstance() const;
+
+	void Initialize(UObject* InOwner);
 
 public:
 	virtual void TriggerAbility();
@@ -37,6 +42,16 @@ public:
 	FOnMontageEnded OnCombatMontageEndDelegate;
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Montage", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY()
+	TObjectPtr<USLCombatComponent> OwningCombatComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Montage, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> CombatMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Ability, meta = (AllowPrivateAccess = "true"))
+	FGameplayTag AbilityTag;
+
+	// 해당 태그를 가지고 있는 스킬의 활성화를 막음
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Ability, meta = (AllowPrivateAccess = "true"))
+	TSet<FGameplayTag> BlockAbilityTags;
 };

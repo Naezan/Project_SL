@@ -2,6 +2,7 @@
 
 
 #include "Ability/SLCombatAbility.h"
+#include "Character/SLCombatComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -24,8 +25,16 @@ UAnimInstance* USLCombatAbility::GetAvatarAnimInstance() const
 	return AvatarMesh ? AvatarMesh->GetAnimInstance() : nullptr;
 }
 
+void USLCombatAbility::Initialize(UObject* InOwner)
+{
+	OwningCombatComponent = Cast<USLCombatComponent>(InOwner);
+}
+
 void USLCombatAbility::TriggerAbility()
 {
+	check(OwningCombatComponent);
+	OwningCombatComponent->RegisterBlockTags(BlockAbilityTags);
+
 	if (UAnimInstance* AnimInstance = GetAvatarAnimInstance())
 	{
 		float Duration = AnimInstance->Montage_Play(CombatMontage);
@@ -49,14 +58,24 @@ void USLCombatAbility::TriggerAbility()
 
 void USLCombatAbility::EndAbility()
 {
+	check(OwningCombatComponent);
+	OwningCombatComponent->UnRegisterBlockTags(BlockAbilityTags);
+
+	//GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString("OnEndAbility"));
+
 	OnEndAbilityDelegate.Clear();
 }
 
 bool USLCombatAbility::CanActivateAbility()
 {
-	ACharacter* AvatarActor = Cast<ACharacter>(GetOwningPawn());
+	check(OwningCombatComponent);
 
-	return AvatarActor ? AvatarActor->GetCharacterMovement()->IsMovingOnGround() : false;
+	if (ACharacter* AvatarActor = Cast<ACharacter>(GetOwningPawn()))
+	{
+		return AvatarActor->GetCharacterMovement()->IsMovingOnGround() && !OwningCombatComponent->HasBlockTag(AbilityTag);
+	}
+
+	return false;
 }
 
 bool USLCombatAbility::IsOverlappingAbility()

@@ -14,13 +14,13 @@ void USLCombatComponent::OnActivateAbility(FGameplayTag TriggerTag)
 
 	if (GrantedAbilities.Contains(TriggerTag))
 	{
-		ActivatedAbility = GrantedAbilities[TriggerTag];
-
-		ActivatedAbility->OnEndAbilityDelegate.Clear();
-		ActivatedAbility->OnEndAbilityDelegate.BindDynamic(this, &ThisClass::OnDeActivateAbility);
-
-		if (ActivatedAbility != nullptr && ActivatedAbility->CanActivateAbility())
+		if (GrantedAbilities[TriggerTag]->CanActivateAbility())
 		{
+			ActivatedAbility = GrantedAbilities[TriggerTag];
+
+			ActivatedAbility->OnEndAbilityDelegate.Clear();
+			ActivatedAbility->OnEndAbilityDelegate.BindDynamic(this, &ThisClass::OnDeActivateAbility);
+
 			ActivatedAbility->TriggerAbility();
 
 			bHasActiveAbility = true;
@@ -45,7 +45,10 @@ void USLCombatComponent::RegisterAbility()
 	{
 		if (!GrantedAbilities.Contains(AbilityInfo.AbilityTag))
 		{
-			GrantedAbilities.Emplace(AbilityInfo.AbilityTag, NewObject<USLCombatAbility>(GetPawn(), AbilityInfo.Ability));
+			USLCombatAbility* CombatAbility = NewObject<USLCombatAbility>(GetPawn(), AbilityInfo.Ability);
+			CombatAbility->Initialize(this);
+
+			GrantedAbilities.Emplace(AbilityInfo.AbilityTag, CombatAbility);
 		}
 	}
 }
@@ -56,4 +59,69 @@ void USLCombatComponent::UnRegisterAbility()
 	{
 		GrantedAbilities.Empty();
 	}
+}
+
+void USLCombatComponent::RegisterBlockTag(FGameplayTag InBlockTag)
+{
+	if (!GrantedBlockTags.Contains(InBlockTag))
+	{
+		GrantedBlockTags.Emplace(InBlockTag);
+	}
+}
+
+void USLCombatComponent::RegisterBlockTags(TSet<FGameplayTag>& InBlockTags)
+{
+	if (InBlockTags.IsEmpty())
+	{
+		return;
+	}
+
+	for (const auto& Tag : InBlockTags)
+	{
+		if (!GrantedBlockTags.Contains(Tag))
+		{
+			GrantedBlockTags.Emplace(Tag);
+		}
+	}
+}
+
+void USLCombatComponent::UnRegisterBlockTag(FGameplayTag InBlockTag)
+{
+	GrantedBlockTags.Remove(InBlockTag);
+}
+
+void USLCombatComponent::UnRegisterBlockTags(TSet<FGameplayTag>& InBlockTags)
+{
+	if (InBlockTags.IsEmpty())
+	{
+		return;
+	}
+
+	for (const auto& Tag : InBlockTags)
+	{
+		GrantedBlockTags.Remove(Tag);
+	}
+}
+
+bool USLCombatComponent::HasBlockTag(FGameplayTag InBlockTag)
+{
+	return GrantedBlockTags.Contains(InBlockTag);
+}
+
+bool USLCombatComponent::HasBlockTags(TSet<FGameplayTag>& InBlockTags)
+{
+	if (InBlockTags.IsEmpty())
+	{
+		return false;
+	}
+
+	for (const auto& Tag : InBlockTags)
+	{
+		if (GrantedBlockTags.Contains(Tag))
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
