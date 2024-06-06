@@ -5,27 +5,20 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Input/SLInputComponent.h"
-#include "Character/SLCombatComponent.h"
-#include "Character/SLEquipmentComponent.h"
-#include "Character/SLStatComponent.h"
 
 ASLPlayer::ASLPlayer()
 {
-	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
-	CameraBoom->TargetArmLength = 400.0f; // The camera follows at this distance behind the character	
+	CameraBoom->TargetArmLength = 400.0f;
 	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
 
 	// Create a follow camera
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
+	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
 	ExtInputComponent = CreateDefaultSubobject<USLInputComponent>(TEXT("InputComponent"));
-	CombatComponent = CreateDefaultSubobject<USLCombatComponent>(TEXT("CombatComponent"));
-	EquipComponent = CreateDefaultSubobject<USLEquipmentComponent>(TEXT("EquipComponent"));
-	StatComponent = CreateDefaultSubobject<USLStatComponent>(TEXT("StatComponent"));
 }
 
 void ASLPlayer::SetupPlayerInputComponent(UInputComponent* InPlayerInputComponent)
@@ -35,75 +28,5 @@ void ASLPlayer::SetupPlayerInputComponent(UInputComponent* InPlayerInputComponen
 	if (ExtInputComponent != nullptr)
 	{
 		ExtInputComponent->SetupInputComponent(InPlayerInputComponent);
-	}
-}
-
-void ASLPlayer::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-}
-
-void ASLPlayer::BeginPlay()
-{
-	Super::BeginPlay();
-
-	if (EquipComponent != nullptr)
-	{
-		EquipComponent->EquipOnStart();
-	}
-}
-
-void ASLPlayer::BeginDestroy()
-{
-	Super::BeginDestroy();
-}
-
-float ASLPlayer::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
-{
-	return Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
-}
-
-void ASLPlayer::OnAbilityTrigger(FGameplayTag TriggerTag)
-{
-	if (CombatComponent != nullptr)
-	{
-		CombatComponent->OnActivateAbility(TriggerTag);
-	}
-}
-
-bool ASLPlayer::HasActiveCombatAbility()
-{
-	if (CombatComponent != nullptr)
-	{
-		return CombatComponent->HasActiveAbility();
-	}
-
-	return false;
-}
-
-void ASLPlayer::RegisterCombatAbility(FGameplayTag AbilityTag, TSubclassOf<USLCombatAbility> CombatAbility)
-{
-	if (CombatComponent != nullptr)
-	{
-		CombatComponent->RegisterAbility(AbilityTag, CombatAbility);
-	}
-}
-
-void ASLPlayer::UnRegisterCombatAbility()
-{
-	if (CombatComponent != nullptr)
-	{
-		CombatComponent->OnDeActivateAbility();
-		CombatComponent->UnRegisterAbility();
-	}
-}
-
-void ASLPlayer::Death()
-{
-	UnRegisterCombatAbility();
-
-	if (EquipComponent != nullptr)
-	{
-		EquipComponent->UnEquip();
 	}
 }

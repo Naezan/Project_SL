@@ -3,15 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Character/SLCharacterBase.h"
+#include "Character/SLCombatCharacter.h"
 #include "SLNonPlayer.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
-class SOULSLIKE_PROTO_API ASLNonPlayer : public ASLCharacterBase
+class SOULSLIKE_PROTO_API ASLNonPlayer : public ASLCombatCharacter
 {
 	GENERATED_BODY()
-	
+
+public:
+	ASLNonPlayer();
 };

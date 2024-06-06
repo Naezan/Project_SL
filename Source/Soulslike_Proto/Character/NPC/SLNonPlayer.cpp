@@ -3,3 +3,6 @@
 
 #include "Character/NPC/SLNonPlayer.h"
 
+ASLNonPlayer::ASLNonPlayer()
+{
+}

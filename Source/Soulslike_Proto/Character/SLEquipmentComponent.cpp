@@ -38,9 +38,10 @@ void USLEquipmentComponent::UnEquip()
 	if (EquippedWeapon)
 	{
 		EquippedWeapon->SetSimulatePhysicsOnWeapon(true);
+		EquippedWeapon->SetWeaponCollisionPreset("BlockAll");
 		EquippedWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 
-		EquippedWeapon->SetWeaponCollisionPreset("BlockAll");
+		EquippedWeapon = nullptr;
 	}
 
 	if (ICombatInterface* CombatControl = Cast<ICombatInterface>(GetPawn()))
