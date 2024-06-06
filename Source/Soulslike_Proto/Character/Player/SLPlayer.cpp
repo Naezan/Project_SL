@@ -6,6 +6,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Input/SLInputComponent.h"
 #include "Character/SLCombatComponent.h"
+#include "Character/SLEquipmentComponent.h"
 #include "Character/SLStatComponent.h"
 
 ASLPlayer::ASLPlayer()
@@ -23,6 +24,7 @@ ASLPlayer::ASLPlayer()
 
 	ExtInputComponent = CreateDefaultSubobject<USLInputComponent>(TEXT("InputComponent"));
 	CombatComponent = CreateDefaultSubobject<USLCombatComponent>(TEXT("CombatComponent"));
+	EquipComponent = CreateDefaultSubobject<USLEquipmentComponent>(TEXT("EquipComponent"));
 	StatComponent = CreateDefaultSubobject<USLStatComponent>(TEXT("StatComponent"));
 }
 
@@ -39,20 +41,20 @@ void ASLPlayer::SetupPlayerInputComponent(UInputComponent* InPlayerInputComponen
 void ASLPlayer::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+}
 
-	if (CombatComponent != nullptr)
+void ASLPlayer::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (EquipComponent != nullptr)
 	{
-		CombatComponent->RegisterAbility();
+		EquipComponent->EquipOnStart();
 	}
 }
 
 void ASLPlayer::BeginDestroy()
 {
-	if (CombatComponent != nullptr)
-	{
-		CombatComponent->UnRegisterAbility();
-	}
-
 	Super::BeginDestroy();
 }
 
@@ -79,10 +81,29 @@ bool ASLPlayer::HasActiveCombatAbility()
 	return false;
 }
 
-void ASLPlayer::Death()
+void ASLPlayer::RegisterCombatAbility(FGameplayTag AbilityTag, TSubclassOf<USLCombatAbility> CombatAbility)
+{
+	if (CombatComponent != nullptr)
+	{
+		CombatComponent->RegisterAbility(AbilityTag, CombatAbility);
+	}
+}
+
+void ASLPlayer::UnRegisterCombatAbility()
 {
 	if (CombatComponent != nullptr)
 	{
 		CombatComponent->OnDeActivateAbility();
+		CombatComponent->UnRegisterAbility();
+	}
+}
+
+void ASLPlayer::Death()
+{
+	UnRegisterCombatAbility();
+
+	if (EquipComponent != nullptr)
+	{
+		EquipComponent->UnEquip();
 	}
 }

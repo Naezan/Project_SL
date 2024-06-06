@@ -12,7 +12,10 @@ class USpringArmComponent;
 class UCameraComponent;
 class USLInputComponent;
 class USLCombatComponent;
+class USLEquipmentComponent;
 class USLStatComponent;
+
+class USLCombatAbility;
 
 /**
  *
@@ -34,6 +37,8 @@ class SOULSLIKE_PROTO_API ASLPlayer : public ASLCharacterBase, public IAbilityCo
 	USLInputComponent* ExtInputComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component|Combat", meta = (AllowPrivateAccess = "true"))
 	USLCombatComponent* CombatComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component|Equipment", meta = (AllowPrivateAccess = "true"))
+	USLEquipmentComponent* EquipComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component|Stat", meta = (AllowPrivateAccess = "true"))
 	USLStatComponent* StatComponent;
 
@@ -43,6 +48,7 @@ public:
 protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* InPlayerInputComponent) override;
 	virtual void PostInitializeComponents() override;
+	virtual void BeginPlay() override;
 	virtual void BeginDestroy() override;
 	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
@@ -59,5 +65,7 @@ public:
 
 	/* ICombatInterface */
 	virtual bool HasActiveCombatAbility() override;
+	virtual void RegisterCombatAbility(FGameplayTag AbilityTag, TSubclassOf<USLCombatAbility> CombatAbility) override;
+	virtual void UnRegisterCombatAbility() override;
 	virtual void Death() override;
 };

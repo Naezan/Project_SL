@@ -17,7 +17,4 @@ class SOULSLIKE_PROTO_API USLMeleeSecondaryAbility : public USLCombatAbility
 public:
 	virtual void TriggerAbility() override;
 	virtual void EndAbility() override;
-
-private:
-	void SelectDirSection();
 };

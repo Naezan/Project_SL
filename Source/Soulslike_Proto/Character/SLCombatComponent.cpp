@@ -39,17 +39,14 @@ void USLCombatComponent::OnDeActivateAbility()
 	}
 }
 
-void USLCombatComponent::RegisterAbility()
+void USLCombatComponent::RegisterAbility(FGameplayTag AbilityTag, TSubclassOf<USLCombatAbility> CombatAbility)
 {
-	for (const auto& AbilityInfo : CombatAbilities)
+	if (!GrantedAbilities.Contains(AbilityTag))
 	{
-		if (!GrantedAbilities.Contains(AbilityInfo.AbilityTag))
-		{
-			USLCombatAbility* CombatAbility = NewObject<USLCombatAbility>(GetPawn(), AbilityInfo.Ability);
-			CombatAbility->Initialize(this);
+		USLCombatAbility* NewAbility = NewObject<USLCombatAbility>(GetPawn(), CombatAbility);
+		NewAbility->Initialize(this);
 
-			GrantedAbilities.Emplace(AbilityInfo.AbilityTag, CombatAbility);
-		}
+		GrantedAbilities.Emplace(AbilityTag, NewAbility);
 	}
 }
 

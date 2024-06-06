@@ -4,7 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+#include "GameplayTagContainer.h"
 #include "CombatInterface.generated.h"
+
+class USLCombatAbility;
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
@@ -22,6 +25,8 @@ class SOULSLIKE_PROTO_API ICombatInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual void Death() {}
 	virtual bool HasActiveCombatAbility() { return false; }
+	virtual void RegisterCombatAbility(FGameplayTag AbilityTag, TSubclassOf<USLCombatAbility> CombatAbility) {}
+	virtual void UnRegisterCombatAbility() {}
+	virtual void Death() {}
 };

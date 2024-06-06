@@ -26,6 +26,11 @@ public:
 		return CastChecked<APawn>(GetOwner());
 	}
 
+	USkeletalMeshComponent* GetPawnMeshComponent() const
+	{
+		return GetChackedPawn()->FindComponentByClass<USkeletalMeshComponent>();
+	}
+
 	APlayerState* GetPlayerState() const
 	{
 		return GetChackedPawn()->GetPlayerState();

@@ -9,18 +9,6 @@
 
 class USLCombatAbility;
 
-USTRUCT(BlueprintType)
-struct FAbilityInfo
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FGameplayTag AbilityTag;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSubclassOf<USLCombatAbility> Ability;
-};
-
 /**
  * 
  */
@@ -34,7 +22,7 @@ public:
 	void OnActivateAbility(FGameplayTag TriggerTag);
 	UFUNCTION()
 	void OnDeActivateAbility();
-	void RegisterAbility();
+	void RegisterAbility(FGameplayTag AbilityTag, TSubclassOf<USLCombatAbility> CombatAbility);
 	void UnRegisterAbility();
 
 	void RegisterBlockTag(FGameplayTag InBlockTag);
@@ -47,9 +35,6 @@ public:
 	bool HasActiveAbility() const { return bHasActiveAbility; }
 
 private:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
-	TArray<FAbilityInfo> CombatAbilities;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
 	TMap<FGameplayTag, USLCombatAbility*> GrantedAbilities;
 
