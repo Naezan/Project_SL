@@ -6,6 +6,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Input/SLInputComponent.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
+#include "GameMode/SLGameMode.h"
 
 ASLPlayer::ASLPlayer()
 {
@@ -40,6 +41,11 @@ void ASLPlayer::DeathStart()
 	if (APlayerController* OwningController = Cast<APlayerController>(GetController()))
 	{
 		DisableInput(OwningController);
+	}
+
+	if (ASLGameMode* GM = Cast<ASLGameMode>(GetWorld()->GetAuthGameMode()))
+	{
+		GM->PlayerDead();
 	}
 }
 

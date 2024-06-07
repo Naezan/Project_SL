@@ -13,6 +13,10 @@ class ASLGameMode : public AGameModeBase
 
 public:
 	ASLGameMode();
+
+public:
+	void NPCDead();
+	void PlayerDead();
 };
 
 

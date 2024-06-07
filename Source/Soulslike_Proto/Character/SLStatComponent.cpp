@@ -12,6 +12,8 @@ void USLStatComponent::InitAttribute()
 {
 	Health = MaxHealth;
 	Stamina = MaxStamina;
+
+	OnHealthChanged.ExecuteIfBound(Health);
 }
 
 void USLStatComponent::InitAttackDamage(float InAttackDamage)
@@ -35,6 +37,8 @@ void USLStatComponent::ResetAttribute()
 float USLStatComponent::ApplyAttackDamage(float InDamage)
 {
 	Health = FMath::Clamp(Health - InDamage, 0.f, MaxHealth);
+
+	OnHealthChanged.ExecuteIfBound(Health);
 
 	return Health;
 }

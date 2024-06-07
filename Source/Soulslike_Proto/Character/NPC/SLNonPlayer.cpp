@@ -4,6 +4,7 @@
 #include "Character/NPC/SLNonPlayer.h"
 #include "AIController.h"
 #include "BrainComponent.h"
+#include "GameMode/SLGameMode.h"
 
 ASLNonPlayer::ASLNonPlayer()
 {
@@ -17,6 +18,11 @@ void ASLNonPlayer::DeathStart()
 	}
 
 	Super::DeathStart();
+
+	if (ASLGameMode* GM = Cast<ASLGameMode>(GetWorld()->GetAuthGameMode()))
+	{
+		GM->NPCDead();
+	}
 }
 
 void ASLNonPlayer::DeathEnd()

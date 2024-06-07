@@ -6,6 +6,8 @@
 #include "Component/PawnComponent.h"
 #include "SLStatComponent.generated.h"
 
+DECLARE_DELEGATE_OneParam(FOnHealthChangedDelegate, float /*NewHealth*/);
+
 /**
  * 
  */
@@ -31,6 +33,9 @@ public:
 
 	// 데미지 만큼 체력 감소
 	float ApplyAttackDamage(float InDamage);
+
+public:
+	FOnHealthChangedDelegate OnHealthChanged;
 	
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stat, meta = (AllowPrivateAccess = "true"))

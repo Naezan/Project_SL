@@ -6,14 +6,28 @@
 #include "Character/SLEquipmentComponent.h"
 #include "Character/SLStatComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/WidgetComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Widget/HpBarWidget.h"
 
 ASLCombatCharacter::ASLCombatCharacter()
 {
 	CombatComponent = CreateDefaultSubobject<USLCombatComponent>(TEXT("CombatComponent"));
 	EquipComponent = CreateDefaultSubobject<USLEquipmentComponent>(TEXT("EquipComponent"));
 	StatComponent = CreateDefaultSubobject<USLStatComponent>(TEXT("AttributeComponent"));
+
+	HpWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HpWidget"));
+	HpWidget->SetupAttachment(GetMesh());
+	HpWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 180.0f));
+	HpWidget->SetWidgetSpace(EWidgetSpace::Screen);
+	HpWidget->SetDrawSize(FVector2D(150.0f, 15.0f));
+	HpWidget->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	if (HpWidgetClass)
+	{
+		HpWidget->SetWidgetClass(HpWidgetClass);
+	}
 }
 
 void ASLCombatCharacter::BeginPlay()
@@ -23,6 +37,8 @@ void ASLCombatCharacter::BeginPlay()
 	if (StatComponent != nullptr)
 	{
 		StatComponent->InitAttribute();
+
+		InitHpBarWidget();
 	}
 
 	if (CombatComponent != nullptr)
@@ -111,6 +127,11 @@ void ASLCombatCharacter::DeathStart()
 		CombatComponent->DeathStart();
 	}
 
+	if (HpWidget != nullptr)
+	{
+		HpWidget->SetWidget(nullptr);
+	}
+
 	if (UCapsuleComponent* CapsuleComp = GetCapsuleComponent())
 	{
 		CapsuleComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -158,4 +179,13 @@ float ASLCombatCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEve
 	}
 
 	return TotalDamage;
+}
+
+void ASLCombatCharacter::InitHpBarWidget()
+{
+	if (UHpBarWidget* HpBarWidget = Cast<UHpBarWidget>(HpWidget->GetWidget()))
+	{
+		HpBarWidget->InitHpBar(StatComponent->GetHealth(), StatComponent->GetMaxHealth());
+		StatComponent->OnHealthChanged.BindUObject(HpBarWidget, &UHpBarWidget::UpdateHpBar);
+	}
 }
