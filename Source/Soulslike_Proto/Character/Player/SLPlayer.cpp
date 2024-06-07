@@ -5,6 +5,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Input/SLInputComponent.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
 
 ASLPlayer::ASLPlayer()
 {
@@ -19,6 +20,7 @@ ASLPlayer::ASLPlayer()
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
 	ExtInputComponent = CreateDefaultSubobject<USLInputComponent>(TEXT("InputComponent"));
+	AIPerceptionStimuliSourceComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("AIPerceptionStimuliSource"));
 }
 
 void ASLPlayer::SetupPlayerInputComponent(UInputComponent* InPlayerInputComponent)

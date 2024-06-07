@@ -63,7 +63,7 @@ void ASLCombatCharacter::UnRegisterCombatAbility()
 	}
 }
 
-void ASLCombatCharacter::Death()
+void ASLCombatCharacter::DeathStart()
 {
 	UnRegisterCombatAbility();
 
@@ -71,4 +71,8 @@ void ASLCombatCharacter::Death()
 	{
 		EquipComponent->UnEquip();
 	}
+}
+
+void ASLCombatCharacter::DeathEnd()
+{
 }

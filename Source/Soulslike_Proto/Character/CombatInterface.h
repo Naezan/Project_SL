@@ -28,5 +28,6 @@ public:
 	virtual bool HasActiveCombatAbility() { return false; }
 	virtual void RegisterCombatAbility(FGameplayTag AbilityTag, TSubclassOf<USLCombatAbility> CombatAbility) {}
 	virtual void UnRegisterCombatAbility() {}
-	virtual void Death() {}
+	virtual void DeathStart() {}
+	virtual void DeathEnd() {}
 };

@@ -11,5 +11,6 @@ public class Soulslike_Proto : ModuleRules
         PublicIncludePaths.AddRange(new string[] { "Soulslike_Proto" });
 
         PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "GameplayTags" });
+		PrivateDependencyModuleNames.AddRange(new string[] { "GameplayTags", "AIModule" });
 	}
 }

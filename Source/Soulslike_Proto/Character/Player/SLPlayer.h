@@ -9,6 +9,7 @@
 class USpringArmComponent;
 class UCameraComponent;
 class USLInputComponent;
+class UAIPerceptionStimuliSourceComponent;
 
 class USLCombatAbility;
 
@@ -44,4 +45,7 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component|Input", meta = (AllowPrivateAccess = "true"))
 	USLInputComponent* ExtInputComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Component|AI", Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UAIPerceptionStimuliSourceComponent> AIPerceptionStimuliSourceComponent;
 };

@@ -35,7 +35,8 @@ public:
 	virtual bool HasActiveCombatAbility() override;
 	virtual void RegisterCombatAbility(FGameplayTag AbilityTag, TSubclassOf<USLCombatAbility> CombatAbility) override;
 	virtual void UnRegisterCombatAbility() override;
-	virtual void Death() override;
+	virtual void DeathStart() override;
+	virtual void DeathEnd() override;
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component|Combat", meta = (AllowPrivateAccess = "true"))
