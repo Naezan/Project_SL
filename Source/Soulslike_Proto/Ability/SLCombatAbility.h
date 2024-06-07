@@ -9,7 +9,7 @@
 
 class USLCombatComponent;
 
-DECLARE_DYNAMIC_DELEGATE(FOnEndAbilitySignature);
+DECLARE_DYNAMIC_DELEGATE(FOnEndAbilityDelegate);
 
 /**
  * 
@@ -32,13 +32,19 @@ public:
 	virtual bool CanActivateAbility();
 	virtual bool IsOverlappingAbility();
 
+	void StopMontage();
 
 protected:
+	virtual void OnNotifyBegin(FName NotifyName) {}
+
+protected:
+	UFUNCTION()
+	void OnNotifyBeginReceived(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload);
 	void OnEndMontage(UAnimMontage* InMontage, bool bInterrupted);
 	bool IsMontagePlaying();
 
 public:
-	FOnEndAbilitySignature OnEndAbilityDelegate;
+	FOnEndAbilityDelegate OnEndAbilityDelegate;
 	FOnMontageEnded OnCombatMontageEndDelegate;
 
 protected:

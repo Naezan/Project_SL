@@ -11,6 +11,9 @@
 class USLCombatComponent;
 class USLEquipmentComponent;
 class USLStatComponent;
+class UDamageType;
+
+struct FWeaponAttributeInfo;
 
 /**
  * 
@@ -25,24 +28,38 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 public:
 	/* IAbilityControlInterface */
 	virtual void OnAbilityTrigger(FGameplayTag TriggerTag) override;
+	/* ~IAbilityControlInterface */
 
 	/* ICombatInterface */
 	virtual bool HasActiveCombatAbility() override;
 	virtual void RegisterCombatAbility(FGameplayTag AbilityTag, TSubclassOf<USLCombatAbility> CombatAbility) override;
-	virtual void UnRegisterCombatAbility() override;
+	virtual void UnRegisterCombatAbility(FGameplayTag AbilityTag) override;
+
+	virtual void RegisterWeaponAttribute(FWeaponAttributeInfo WeaponAttribute) override;
+	virtual void UnRegisterWeaponAttribute() override;
+
+	virtual void ApplyWeaponDamage(AActor* DamageVictim, TSubclassOf<UDamageType> DamageTypeClass) override;
+
 	virtual void DeathStart() override;
 	virtual void DeathEnd() override;
+	/* ~ICombatInterface */
+
+	void RagDoll();
+
+protected:
+	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component|Combat", meta = (AllowPrivateAccess = "true"))
-	USLCombatComponent* CombatComponent;
+	TObjectPtr<USLCombatComponent> CombatComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component|Equipment", meta = (AllowPrivateAccess = "true"))
-	USLEquipmentComponent* EquipComponent;
+	TObjectPtr<USLEquipmentComponent> EquipComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component|Stat", meta = (AllowPrivateAccess = "true"))
-	USLStatComponent* StatComponent;
+	TObjectPtr<USLStatComponent> StatComponent;
+
+	FTimerHandle RagDollTimer;
 };

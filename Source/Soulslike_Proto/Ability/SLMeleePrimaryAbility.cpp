@@ -2,6 +2,9 @@
 
 
 #include "Ability/SLMeleePrimaryAbility.h"
+#include "Character/CombatInterface.h"
+#include "Kismet/GameplayStatics.h"
+#include "DrawDebugHelpers.h"
 
 void USLMeleePrimaryAbility::TriggerAbility()
 {
@@ -29,6 +32,43 @@ void USLMeleePrimaryAbility::EndAbility()
 bool USLMeleePrimaryAbility::IsOverlappingAbility()
 {
 	return true;
+}
+
+void USLMeleePrimaryAbility::OnNotifyBegin(FName NotifyName)
+{
+	if (AttackInfo.NotifyName.IsEqual(NotifyName))
+	{
+		FCollisionObjectQueryParams ObjectParams(ECC_Pawn);
+		FCollisionQueryParams QueryParams(FName("SweepSingleAttack"), false, GetOwningPawn());
+
+		FVector Start = GetOwningPawn()->GetActorLocation();
+		FVector End = Start + GetOwningPawn()->GetActorForwardVector() * AttackInfo.DepthRange;
+
+		FHitResult OutHit;
+		GetWorld()->SweepSingleByObjectType(OutHit, Start, End, FQuat::Identity, ObjectParams, FCollisionShape::MakeSphere(AttackInfo.WidthRange), QueryParams);
+
+		FVector const TraceVec = End - Start;
+		float const Dist = TraceVec.Size();
+
+		FVector const Center = Start + TraceVec * 0.5f;
+		float const HalfHeight = (Dist * 0.5f) + AttackInfo.WidthRange;
+
+		FQuat const CapsuleRot = FRotationMatrix::MakeFromZ(TraceVec).ToQuat();
+
+		if (OutHit.bBlockingHit)
+		{
+			if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetOwningPawn()))
+			{
+				CombatInterface->ApplyWeaponDamage(OutHit.GetActor(), nullptr);
+			}
+
+			DrawDebugCapsule(GetWorld(), Center, HalfHeight, AttackInfo.WidthRange, CapsuleRot, FColor::Red, false, 2.f);
+		}
+		else
+		{
+			DrawDebugCapsule(GetWorld(), Center, HalfHeight, AttackInfo.WidthRange, CapsuleRot, FColor::Green, false, 2.f);
+		}
+	}
 }
 
 bool USLMeleePrimaryAbility::CanChangeComboSection()

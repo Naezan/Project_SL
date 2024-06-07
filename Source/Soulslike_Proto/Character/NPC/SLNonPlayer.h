@@ -16,4 +16,8 @@ class SOULSLIKE_PROTO_API ASLNonPlayer : public ASLCombatCharacter
 
 public:
 	ASLNonPlayer();
+
+protected:
+	virtual void DeathStart() override;
+	virtual void DeathEnd() override;
 };

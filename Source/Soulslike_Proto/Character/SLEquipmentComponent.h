@@ -4,9 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Component/PawnComponent.h"
+#include "Weapon/SLWeaponDataAsset.h"
 #include "SLEquipmentComponent.generated.h"
 
-class USLWeaponDataAsset;
 class ASLWeaponActor;
 
 /**

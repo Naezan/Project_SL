@@ -32,3 +32,18 @@ void ASLPlayer::SetupPlayerInputComponent(UInputComponent* InPlayerInputComponen
 		ExtInputComponent->SetupInputComponent(InPlayerInputComponent);
 	}
 }
+
+void ASLPlayer::DeathStart()
+{
+	Super::DeathStart();
+
+	if (APlayerController* OwningController = Cast<APlayerController>(GetController()))
+	{
+		DisableInput(OwningController);
+	}
+}
+
+void ASLPlayer::DeathEnd()
+{
+	Super::DeathEnd();
+}

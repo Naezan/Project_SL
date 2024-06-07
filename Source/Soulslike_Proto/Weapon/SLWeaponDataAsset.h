@@ -22,6 +22,15 @@ struct FAbilityInfo
 	TSubclassOf<USLCombatAbility> Ability;
 };
 
+USTRUCT(BlueprintType)
+struct FWeaponAttributeInfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	float Damage;
+};
+
 /**
  * 
  */
@@ -33,12 +42,15 @@ class SOULSLIKE_PROTO_API USLWeaponDataAsset : public UPrimaryDataAsset
 public:
 	USLWeaponDataAsset();
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "Equipment")
 	FName WeaponSocket;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "Equipment")
 	TSubclassOf<ASLWeaponActor> WeaponMeshActor;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "Ability")
 	TArray<FAbilityInfo> WeaponAbiliies;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Attribute")
+	FWeaponAttributeInfo WeaponAttribute;
 };

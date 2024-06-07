@@ -30,6 +30,8 @@ void USLEquipmentComponent::Equip()
 		{
 			CombatControl->RegisterCombatAbility(AbilityInfo.AbilityTag, AbilityInfo.Ability);
 		}
+
+		CombatControl->RegisterWeaponAttribute(WeaponDataAsset->WeaponAttribute);
 	}
 }
 
@@ -46,7 +48,11 @@ void USLEquipmentComponent::UnEquip()
 
 	if (ICombatInterface* CombatControl = Cast<ICombatInterface>(GetPawn()))
 	{
-		CombatControl->UnRegisterCombatAbility();
+		for (const auto& AbilityInfo : WeaponDataAsset->WeaponAbiliies)
+		{
+			CombatControl->UnRegisterCombatAbility(AbilityInfo.AbilityTag);
+		}
+		CombatControl->UnRegisterWeaponAttribute();
 	}
 }
 

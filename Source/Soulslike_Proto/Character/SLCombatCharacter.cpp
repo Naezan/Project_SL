@@ -5,27 +5,35 @@
 #include "Character/SLCombatComponent.h"
 #include "Character/SLEquipmentComponent.h"
 #include "Character/SLStatComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 ASLCombatCharacter::ASLCombatCharacter()
 {
 	CombatComponent = CreateDefaultSubobject<USLCombatComponent>(TEXT("CombatComponent"));
 	EquipComponent = CreateDefaultSubobject<USLEquipmentComponent>(TEXT("EquipComponent"));
-	StatComponent = CreateDefaultSubobject<USLStatComponent>(TEXT("StatComponent"));
+	StatComponent = CreateDefaultSubobject<USLStatComponent>(TEXT("AttributeComponent"));
 }
 
 void ASLCombatCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (StatComponent != nullptr)
+	{
+		StatComponent->InitAttribute();
+	}
+
+	if (CombatComponent != nullptr)
+	{
+		CombatComponent->RegisterDefualtAbilities();
+	}
+
 	if (EquipComponent != nullptr)
 	{
 		EquipComponent->EquipOnStart();
 	}
-}
-
-float ASLCombatCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
-{
-	return Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 }
 
 void ASLCombatCharacter::OnAbilityTrigger(FGameplayTag TriggerTag)
@@ -54,25 +62,100 @@ void ASLCombatCharacter::RegisterCombatAbility(FGameplayTag AbilityTag, TSubclas
 	}
 }
 
-void ASLCombatCharacter::UnRegisterCombatAbility()
+void ASLCombatCharacter::UnRegisterCombatAbility(FGameplayTag AbilityTag)
 {
 	if (CombatComponent != nullptr)
 	{
-		CombatComponent->OnDeActivateAbility();
-		CombatComponent->UnRegisterAbility();
+		CombatComponent->UnRegisterAbility(AbilityTag);
+	}
+}
+
+void ASLCombatCharacter::RegisterWeaponAttribute(FWeaponAttributeInfo WeaponAttribute)
+{
+	if (StatComponent != nullptr)
+	{
+		StatComponent->InitAttackDamage(WeaponAttribute.Damage);
+	}
+}
+
+void ASLCombatCharacter::UnRegisterWeaponAttribute()
+{
+	if (StatComponent != nullptr)
+	{
+		StatComponent->ResetAttribute();
+	}
+}
+
+void ASLCombatCharacter::ApplyWeaponDamage(AActor* DamageVictim, TSubclassOf<UDamageType> DamageTypeClass)
+{
+	if (StatComponent != nullptr)
+	{
+		UGameplayStatics::ApplyDamage(DamageVictim, StatComponent->GetAttackDamage(), GetController(), this, DamageTypeClass);
 	}
 }
 
 void ASLCombatCharacter::DeathStart()
 {
-	UnRegisterCombatAbility();
+	if (CombatComponent != nullptr)
+	{
+		CombatComponent->OnDeActivateAbility();
+	}
 
 	if (EquipComponent != nullptr)
 	{
 		EquipComponent->UnEquip();
 	}
+
+	if (CombatComponent != nullptr)
+	{
+		CombatComponent->DeathStart();
+	}
+
+	if (UCapsuleComponent* CapsuleComp = GetCapsuleComponent())
+	{
+		CapsuleComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		CapsuleComp->SetCollisionResponseToAllChannels(ECR_Ignore);
+	}
 }
 
 void ASLCombatCharacter::DeathEnd()
 {
+	if (CombatComponent != nullptr)
+	{
+		CombatComponent->UnRegisterAllAbilities();
+	}
+
+	GetCharacterMovement()->StopMovementImmediately();
+
+	RagDoll();
+}
+
+void ASLCombatCharacter::RagDoll()
+{
+	GetMesh()->SetCollisionProfileName(FName("Ragdoll"));
+	GetMesh()->SetSimulatePhysics(true);
+	GetMesh()->SetAllBodiesBelowSimulatePhysics(FName("pelvis"), true, true);
+}
+
+float ASLCombatCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float TotalDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+
+	if (StatComponent != nullptr)
+	{
+		float Health = StatComponent->ApplyAttackDamage(TotalDamage);
+
+		if (FMath::IsNearlyZero(Health))
+		{
+			DeathStart();
+			return TotalDamage;
+		}
+	}
+
+	if (CombatComponent != nullptr)
+	{
+		CombatComponent->PlayHitMontage(DamageCauser);
+	}
+
+	return TotalDamage;
 }

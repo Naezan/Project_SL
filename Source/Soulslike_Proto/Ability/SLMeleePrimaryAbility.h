@@ -26,6 +26,21 @@ public:
 	void IncreatementSection();
 };
 
+USTRUCT(BlueprintType)
+struct FAttackInfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	FName NotifyName;
+
+	UPROPERTY(EditAnywhere)
+	float WidthRange;
+
+	UPROPERTY(EditAnywhere)
+	float DepthRange;
+};
+
 /**
  * 
  */
@@ -36,8 +51,11 @@ class SOULSLIKE_PROTO_API USLMeleePrimaryAbility : public USLCombatAbility
 
 public:
 	virtual void TriggerAbility() override;
-	virtual void EndAbility();
+	virtual void EndAbility() override;
 	virtual bool IsOverlappingAbility() override;
+
+protected:
+	virtual void OnNotifyBegin(FName NotifyName) override;
 
 private:
 	bool CanChangeComboSection();
@@ -46,4 +64,6 @@ private:
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combo", meta = (AllowPrivateAccess = "true"))
 	FComboSectionInfo ComboSectionInfo;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combo|Attack", meta = (AllowPrivateAccess = "true"))
+	FAttackInfo AttackInfo;
 };

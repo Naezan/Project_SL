@@ -48,6 +48,9 @@ void USLCombatAbility::TriggerAbility()
 
 			OnCombatMontageEndDelegate.BindUObject(this, &ThisClass::OnEndMontage);
 			AnimInstance->Montage_SetEndDelegate(OnCombatMontageEndDelegate, CombatMontage);
+
+			AnimInstance->OnPlayMontageNotifyBegin.Clear();
+			AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(this, &USLCombatAbility::OnNotifyBeginReceived);
 		}
 		else
 		{
@@ -61,8 +64,13 @@ void USLCombatAbility::EndAbility()
 	check(OwningCombatComponent);
 	OwningCombatComponent->UnRegisterBlockTags(BlockAbilityTags);
 
-	//GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString("OnEndAbility"));
+	if (UAnimInstance* AnimInstance = GetAvatarAnimInstance())
+	{
+		AnimInstance->OnMontageEnded.Clear();
+		AnimInstance->OnPlayMontageNotifyBegin.Clear();
+	}
 
+	OnCombatMontageEndDelegate.Unbind();
 	OnEndAbilityDelegate.Clear();
 }
 
@@ -81,6 +89,19 @@ bool USLCombatAbility::CanActivateAbility()
 bool USLCombatAbility::IsOverlappingAbility()
 {
 	return false;
+}
+
+void USLCombatAbility::StopMontage()
+{
+	if (UAnimInstance* AnimInstance = GetAvatarAnimInstance())
+	{
+		AnimInstance->Montage_Stop(true, CombatMontage);
+	}
+}
+
+void USLCombatAbility::OnNotifyBeginReceived(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload)
+{
+	OnNotifyBegin(NotifyName);
 }
 
 void USLCombatAbility::OnEndMontage(UAnimMontage* InMontage, bool bInterrupted)

@@ -5,9 +5,20 @@
 #include "CoreMinimal.h"
 #include "Component/PawnComponent.h"
 #include "GameplayTagContainer.h"
+#include "Weapon/SLWeaponDataAsset.h"
 #include "SLCombatComponent.generated.h"
 
 class USLCombatAbility;
+
+UENUM(BlueprintType)
+enum class EDamageDirection : uint8
+{
+	None UMETA(DisplayName = "None"),
+	Forward UMETA(DisplayName = "Forward"),
+	Backward UMETA(DisplayName = "Backward"),
+	Left UMETA(DisplayName = "Left"),
+	Right UMETA(DisplayName = "Right")
+};
 
 /**
  * 
@@ -23,7 +34,9 @@ public:
 	UFUNCTION()
 	void OnDeActivateAbility();
 	void RegisterAbility(FGameplayTag AbilityTag, TSubclassOf<USLCombatAbility> CombatAbility);
-	void UnRegisterAbility();
+	void RegisterDefualtAbilities();
+	void UnRegisterAbility(FGameplayTag AbilityTag);
+	void UnRegisterAllAbilities();
 
 	void RegisterBlockTag(FGameplayTag InBlockTag);
 	void RegisterBlockTags(TSet<FGameplayTag>& InBlockTags);
@@ -34,9 +47,14 @@ public:
 
 	bool HasActiveAbility() const { return bHasActiveAbility; }
 
+	void DeathStart();
+	void PlayHitMontage(AActor* Attacker);
+
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
 	TMap<FGameplayTag, USLCombatAbility*> GrantedAbilities;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
+	TArray<FAbilityInfo> DefaultAbilities;
 
 	//해당 태그를 가지고 있는 스킬은 활성화될 수 없습니다.
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
@@ -47,4 +65,16 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
 	uint8 bHasActiveAbility : 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ability, meta = (AllowPrivateAccess = "true"))
+	FGameplayTag DeathTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = HitReact, meta = (AllowPrivateAccess = "true"))
+	TMap<EDamageDirection, UAnimMontage*> HitReactMontageMap;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = HitReact, meta = (AllowPrivateAccess = "true"))
+	EDamageDirection DamageDirection;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = HitReact, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UAnimMontage> HitReactMontage;
 };

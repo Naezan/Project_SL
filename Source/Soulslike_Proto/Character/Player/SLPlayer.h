@@ -27,6 +27,8 @@ public:
 protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* InPlayerInputComponent) override;
 
+	virtual void DeathStart() override;
+	virtual void DeathEnd() override;
 
 public:
 	/** Returns CameraBoom subobject **/

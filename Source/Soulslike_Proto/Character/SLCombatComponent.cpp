@@ -6,7 +6,7 @@
 
 void USLCombatComponent::OnActivateAbility(FGameplayTag TriggerTag)
 {
-	// 현재 활성화중인 스킬이 있으면 중지, 단 콤보공격의 경우엔 넘어감
+	// 현재 활성화중인 스킬이 있으면 스킵, 단 콤보공격의 경우엔 넘어감
 	if (bHasActiveAbility && (ActivatedAbility != nullptr && !ActivatedAbility->IsOverlappingAbility()))
 	{
 		return;
@@ -32,6 +32,7 @@ void USLCombatComponent::OnDeActivateAbility()
 {
 	if (ActivatedAbility != nullptr)
 	{
+		ActivatedAbility->OnEndAbilityDelegate.Clear();
 		ActivatedAbility->EndAbility();
 
 		ActivatedAbility = nullptr;
@@ -50,7 +51,29 @@ void USLCombatComponent::RegisterAbility(FGameplayTag AbilityTag, TSubclassOf<US
 	}
 }
 
-void USLCombatComponent::UnRegisterAbility()
+void USLCombatComponent::RegisterDefualtAbilities()
+{
+	for (const auto& Info : DefaultAbilities)
+	{
+		if (!GrantedBlockTags.Contains(Info.AbilityTag))
+		{
+			USLCombatAbility* NewAbility = NewObject<USLCombatAbility>(GetPawn(), Info.Ability);
+			NewAbility->Initialize(this);
+
+			GrantedAbilities.Emplace(Info.AbilityTag, NewAbility);
+		}
+	}
+}
+
+void USLCombatComponent::UnRegisterAbility(FGameplayTag AbilityTag)
+{
+	if (GrantedBlockTags.Contains(AbilityTag))
+	{
+		GrantedAbilities.Remove(AbilityTag);
+	}
+}
+
+void USLCombatComponent::UnRegisterAllAbilities()
 {
 	if (!GrantedAbilities.IsEmpty())
 	{
@@ -121,4 +144,46 @@ bool USLCombatComponent::HasBlockTags(TSet<FGameplayTag>& InBlockTags)
 	}
 
 	return false;
+}
+
+void USLCombatComponent::DeathStart()
+{
+	if (ActivatedAbility)
+	{
+		ActivatedAbility->StopMontage();
+	}
+
+	OnDeActivateAbility();
+
+	OnActivateAbility(DeathTag);
+}
+
+void USLCombatComponent::PlayHitMontage(AActor* Attacker)
+{
+	FVector AttackerDirection = (Attacker->GetActorLocation() - GetPawn()->GetActorLocation()).GetSafeNormal();
+
+	FVector ForwardVector = GetPawn()->GetActorForwardVector();
+	FVector RightVector = GetPawn()->GetActorRightVector();
+
+	float ForwardDot = FVector::DotProduct(AttackerDirection, ForwardVector);
+	float RightDot = FVector::DotProduct(AttackerDirection, RightVector);
+
+	if (FMath::Abs(ForwardDot) > FMath::Abs(RightDot))
+	{
+		DamageDirection = ForwardDot > 0.707 ? EDamageDirection::Forward : EDamageDirection::Backward;
+	}
+	else
+	{
+		DamageDirection = RightDot > 0.707 ? EDamageDirection::Right : EDamageDirection::Left;
+	}
+
+	if (HitReactMontageMap.Contains(DamageDirection))
+	{
+		HitReactMontage = HitReactMontageMap[DamageDirection];
+	}
+
+	if (HitReactMontage)
+	{
+		GetPawnMeshComponent()->GetAnimInstance()->Montage_Play(HitReactMontage);
+	}
 }
