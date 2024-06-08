@@ -5,6 +5,7 @@
 #include "Character/SLCombatComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Ability/AbilityControlInterface.h"
 
 APawn* USLCombatAbility::GetOwningPawn() const
 {
@@ -63,6 +64,11 @@ void USLCombatAbility::EndAbility()
 {
 	check(OwningCombatComponent);
 	OwningCombatComponent->UnRegisterBlockTags(BlockAbilityTags);
+
+	if (IAbilityControlInterface* AbilityPawn = Cast<IAbilityControlInterface>(GetOwningPawn()))
+	{
+		AbilityPawn->ExecuteOnAbilityEndDelegate();
+	}
 
 	if (UAnimInstance* AnimInstance = GetAvatarAnimInstance())
 	{

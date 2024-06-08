@@ -14,9 +14,8 @@ class UAbilityControlInterface : public UInterface
 	GENERATED_BODY()
 };
 
-/**
- * 
- */
+DECLARE_DELEGATE(FOnAbilityEndDelegate);
+
 class SOULSLIKE_PROTO_API IAbilityControlInterface
 {
 	GENERATED_BODY()
@@ -24,4 +23,6 @@ class SOULSLIKE_PROTO_API IAbilityControlInterface
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	virtual void OnAbilityTrigger(FGameplayTag TriggerTag) {}
+	virtual void SetAbilityEndDelegate(const FOnAbilityEndDelegate& InAbilityEndDelegate) {}
+	virtual void ExecuteOnAbilityEndDelegate() {}
 };

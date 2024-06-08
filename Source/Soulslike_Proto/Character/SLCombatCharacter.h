@@ -32,6 +32,8 @@ protected:
 public:
 	/* IAbilityControlInterface */
 	virtual void OnAbilityTrigger(FGameplayTag TriggerTag) override;
+	virtual void SetAbilityEndDelegate(const FOnAbilityEndDelegate& InAbilityEndDelegate) override;
+	virtual void ExecuteOnAbilityEndDelegate() override;
 	/* ~IAbilityControlInterface */
 
 	/* ICombatInterface */
@@ -68,4 +70,6 @@ private:
 	TObjectPtr<class UWidgetComponent> HpWidget;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Widget", Meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UUserWidget> HpWidgetClass;
+
+	FOnAbilityEndDelegate OnAbilityEndDelegate;
 };

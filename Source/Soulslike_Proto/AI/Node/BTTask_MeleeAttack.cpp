@@ -3,6 +3,7 @@
 
 #include "AI/Node/BTTask_MeleeAttack.h"
 #include "AIController.h"
+#include "Ability/AbilityControlInterface.h"
 
 UBTTask_MeleeAttack::UBTTask_MeleeAttack()
 {
@@ -13,13 +14,27 @@ EBTNodeResult::Type UBTTask_MeleeAttack::ExecuteTask(UBehaviorTreeComponent& Own
 {
 	EBTNodeResult::Type Result = Super::ExecuteTask(OwnerComp, NodeMemory);
 
-	AAIController* OwnerController = OwnerComp.GetAIOwner();
-	OwnerController->GetPawn();
+	MyOwnerComp = &OwnerComp;
 
-	if (!OwnerController)
+	AAIController* OwnerController = OwnerComp.GetAIOwner();
+	IAbilityControlInterface* AbilityPawn = Cast<IAbilityControlInterface>(OwnerController->GetPawn());
+
+	if (!OwnerController || !AbilityPawn)
 		return EBTNodeResult::Failed;
 
-	//TODO ÄÞº¸°ø°Ý
+	FOnAbilityEndDelegate OnAbilityEndDelegate;
+	OnAbilityEndDelegate.BindUObject(this, &UBTTask_MeleeAttack::OnFinishTack);
 
-	return EBTNodeResult::Succeeded;
+	AbilityPawn->SetAbilityEndDelegate(OnAbilityEndDelegate);
+	AbilityPawn->OnAbilityTrigger(AttackTag);
+
+	return EBTNodeResult::InProgress;
+}
+
+void UBTTask_MeleeAttack::OnFinishTack()
+{
+	if (MyOwnerComp)
+	{
+		FinishLatentTask(*MyOwnerComp, EBTNodeResult::Succeeded);
+	}
 }

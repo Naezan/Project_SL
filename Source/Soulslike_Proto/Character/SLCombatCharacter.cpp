@@ -60,6 +60,16 @@ void ASLCombatCharacter::OnAbilityTrigger(FGameplayTag TriggerTag)
 	}
 }
 
+void ASLCombatCharacter::SetAbilityEndDelegate(const FOnAbilityEndDelegate& InAbilityEndDelegate)
+{
+	OnAbilityEndDelegate = InAbilityEndDelegate;
+}
+
+void ASLCombatCharacter::ExecuteOnAbilityEndDelegate()
+{
+	OnAbilityEndDelegate.ExecuteIfBound();
+}
+
 bool ASLCombatCharacter::HasActiveCombatAbility()
 {
 	if (CombatComponent != nullptr)
@@ -114,7 +124,7 @@ void ASLCombatCharacter::DeathStart()
 {
 	if (CombatComponent != nullptr)
 	{
-		CombatComponent->OnDeActivateAbility();
+		CombatComponent->OnEndAbility();
 	}
 
 	if (EquipComponent != nullptr)

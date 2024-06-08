@@ -19,7 +19,7 @@ void USLCombatComponent::OnActivateAbility(FGameplayTag TriggerTag)
 			ActivatedAbility = GrantedAbilities[TriggerTag];
 
 			ActivatedAbility->OnEndAbilityDelegate.Clear();
-			ActivatedAbility->OnEndAbilityDelegate.BindDynamic(this, &ThisClass::OnDeActivateAbility);
+			ActivatedAbility->OnEndAbilityDelegate.BindDynamic(this, &ThisClass::OnEndAbility);
 
 			ActivatedAbility->TriggerAbility();
 
@@ -28,7 +28,7 @@ void USLCombatComponent::OnActivateAbility(FGameplayTag TriggerTag)
 	}
 }
 
-void USLCombatComponent::OnDeActivateAbility()
+void USLCombatComponent::OnEndAbility()
 {
 	if (ActivatedAbility != nullptr)
 	{
@@ -153,7 +153,7 @@ void USLCombatComponent::DeathStart()
 		ActivatedAbility->StopMontage();
 	}
 
-	OnDeActivateAbility();
+	OnEndAbility();
 
 	OnActivateAbility(DeathTag);
 }

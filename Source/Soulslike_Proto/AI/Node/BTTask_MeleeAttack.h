@@ -19,4 +19,14 @@ public:
 
 	virtual EBTNodeResult::Type ExecuteTask(
 		UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+
+private:
+	void OnFinishTack();
+
+private:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack|Tag", meta = (AllowPrivateAccess = "true"))
+	FGameplayTag AttackTag;
+
+	UPROPERTY()
+	TObjectPtr<UBehaviorTreeComponent> MyOwnerComp;
 };

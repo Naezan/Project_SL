@@ -32,7 +32,7 @@ public:
 	UFUNCTION()
 	void OnActivateAbility(FGameplayTag TriggerTag);
 	UFUNCTION()
-	void OnDeActivateAbility();
+	void OnEndAbility();
 	void RegisterAbility(FGameplayTag AbilityTag, TSubclassOf<USLCombatAbility> CombatAbility);
 	void RegisterDefualtAbilities();
 	void UnRegisterAbility(FGameplayTag AbilityTag);
