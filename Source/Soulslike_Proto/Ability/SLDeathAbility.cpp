@@ -2,7 +2,7 @@
 
 
 #include "Ability/SLDeathAbility.h"
-#include "Character/CombatInterface.h"
+#include "Combat/CombatInterface.h"
 
 void USLDeathAbility::TriggerAbility()
 {

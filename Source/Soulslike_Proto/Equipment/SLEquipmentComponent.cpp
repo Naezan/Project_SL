@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Character/SLEquipmentComponent.h"
-#include "Weapon/SLWeaponDataAsset.h"
+#include "Equipment/SLEquipmentComponent.h"
+#include "Combat/CombatInterface.h"
 #include "Weapon/SLWeaponActor.h"
-#include "Character/CombatInterface.h"
+#include "Weapon/SLWeaponDataAsset.h"
 
 void USLEquipmentComponent::EquipOnStart()
 {

@@ -2,12 +2,12 @@
 
 
 #include "Character/SLCombatCharacter.h"
-#include "Character/SLCombatComponent.h"
-#include "Character/SLEquipmentComponent.h"
-#include "Character/SLStatComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
-#include "Components/WidgetComponent.h"
+#include "Attribute/SLStatComponent.h"
+#include "Combat/SLCombatComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/WidgetComponent.h"
+#include "Equipment/SLEquipmentComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Widget/HpBarWidget.h"
 

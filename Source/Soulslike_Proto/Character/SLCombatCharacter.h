@@ -3,9 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Character/SLCharacterBase.h"
 #include "Ability/AbilityControlInterface.h"
-#include "Character/CombatInterface.h"
+#include "Character/SLCharacterBase.h"
+#include "Combat/CombatInterface.h"
 #include "SLCombatCharacter.generated.h"
 
 class USLCombatComponent;

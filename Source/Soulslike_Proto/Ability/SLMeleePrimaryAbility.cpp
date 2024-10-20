@@ -2,9 +2,9 @@
 
 
 #include "Ability/SLMeleePrimaryAbility.h"
-#include "Character/CombatInterface.h"
-#include "Kismet/GameplayStatics.h"
+#include "Combat/CombatInterface.h"
 #include "DrawDebugHelpers.h"
+#include "Kismet/GameplayStatics.h"
 
 void USLMeleePrimaryAbility::TriggerAbility()
 {

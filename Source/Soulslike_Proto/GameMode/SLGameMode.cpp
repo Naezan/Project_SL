@@ -1,8 +1,8 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "SLGameMode.h"
+#include "Character/Player/SLPlayerController.h"
 #include "UObject/ConstructorHelpers.h"
-#include "Character/SLPlayerController.h"
 
 ASLGameMode::ASLGameMode()
 {

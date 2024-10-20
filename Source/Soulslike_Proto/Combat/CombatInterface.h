@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/Interface.h"
 #include "GameplayTagContainer.h"
+#include "UObject/Interface.h"
 #include "Weapon/SLWeaponDataAsset.h"
 #include "CombatInterface.generated.h"
 

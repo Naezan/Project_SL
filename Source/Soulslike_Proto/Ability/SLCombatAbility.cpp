@@ -2,10 +2,10 @@
 
 
 #include "Ability/SLCombatAbility.h"
-#include "Character/SLCombatComponent.h"
+#include "Ability/AbilityControlInterface.h"
+#include "Combat/SLCombatComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Ability/AbilityControlInterface.h"
 
 APawn* USLCombatAbility::GetOwningPawn() const
 {

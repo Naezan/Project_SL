@@ -2,12 +2,12 @@
 
 
 #include "Input/SLInputComponent.h"
-#include "GameFramework/Character.h"
+#include "Ability/AbilityControlInterface.h"
+#include "Combat/CombatInterface.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "GameFramework/Character.h"
 #include "InputActionValue.h"
-#include "Ability/AbilityControlInterface.h"
-#include "Character/CombatInterface.h"
 
 // Sets default values for this component's properties
 USLInputComponent::USLInputComponent()

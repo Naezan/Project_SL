@@ -4,9 +4,9 @@
 #include "Character/Player/SLPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "GameMode/SLGameMode.h"
 #include "Input/SLInputComponent.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
-#include "GameMode/SLGameMode.h"
 
 ASLPlayer::ASLPlayer()
 {
